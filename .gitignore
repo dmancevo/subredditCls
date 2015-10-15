@@ -175,5 +175,10 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-#SQL
+# SQL
 *.db
+*.sqlite
+
+# Pickle
+*.pkl
+*.npy
