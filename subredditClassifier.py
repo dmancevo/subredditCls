@@ -7,6 +7,7 @@ from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.metrics import f1_score
 from datetime import datetime as dt
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn import svm
 from sklearn.externals import joblib
 import sys
 
@@ -16,7 +17,6 @@ class SubredditClassifier:
     '''
 
     def __init__(self, fes, db_path='sample.db'):
-
         #db path
         self.db_path = db_path
 
@@ -107,13 +107,11 @@ class SubredditClassifier:
             y_sub = y[k*length : ]
             yield (X_sub, y_sub)
 
-    def fit(self):
+    def fit(self, limit=None):
         '''
         Train feature extractors and classifier.
         '''
         print(dt.now())
-
-        limit = None
 
         #Iterators for training feature extractors.
         X_train_iter = self._get_X('train', limit)
@@ -136,6 +134,8 @@ class SubredditClassifier:
 
         #Train classifier by stochastic gradient descent.
         print "Training classifier..." , dt.now()
+        # self.svmCl.fit(X_train,y_train)
+
         classes = self.classes.values()
         for (X, y) in self._X_y_iter(X_train, y_train):
             self.enet.partial_fit(X, y, classes=classes)
@@ -143,11 +143,8 @@ class SubredditClassifier:
         print(dt.now())
 
 
-    def test(self):
-        print(dt.now())
-        print("Testing...")
-
-        limit = None
+    def test(self, limit=None):
+        print 'Testing...', dt.now()
 
         X_test_iter = self._get_X('test', limit)
         y_test = self._get_y('test', limit)
@@ -157,9 +154,12 @@ class SubredditClassifier:
         X_test = self.scl.transform(X_test)
 
         score = self.enet.score(X_test, y_test)
+        # score = self.svmCl.score(X_test, y_test)
         print "Accuracy =", score
 
         predictions = self.enet.predict(X_test)
+        # predictions = self.svmCl.predict(X_test)
+
 
         f1 = f1_score(y_test, predictions, average = None)
         print "F1_classes = ", f1
@@ -172,10 +172,9 @@ class SubredditClassifier:
 
 if __name__ == '__main__':
 
-    if(len(sys.argv) != 3):
-        print 'usage: python subredditClassifier <trainTest|load> <save|noSave>'
-
-    elif(sys.argv[1] == 'trainTest'):
+    if(len(sys.argv) != 3 or (sys.argv[1] != 'train' and sys.argv[1] != 'load')):
+        print 'usage: python subredditClassifier <train|load> <filename|nosave>'
+    elif(sys.argv[1] == 'train'):
         #Instantiate feature extractor.
         fe1 = CountVectorizer(min_df=3,  max_features=None,
             strip_accents='unicode', analyzer='char_wb',
@@ -190,20 +189,24 @@ if __name__ == '__main__':
         cls = SubredditClassifier(fes=fe2, db_path='../sample.sqlite')
 
         #Fit classifier and feature extractors to the dataset.
-        cls.fit()
+        cls.fit(2000)
 
         #Test feature extractor and classifier (weighted F1-score).
-        cls.test()
+        cls.test(1000)
 
-        if(sys.argv[2] == 'save'):
-            joblib.dump(cls, 'cls.pkl')
+        if(sys.argv[2] == 'nosave'):
+            pass
+        else:
+            joblib.dump(cls, sys.argv[2] + '.pkl')
 
     elif(sys.argv[1] == 'load'):
         print 'loading model', dt.now()
-        cls = joblib.load('cls.pkl')
+        cls = joblib.load(sys.argv[2] + '.pkl')
         print 'loaded model', dt.now()
         cls.connectDB(db_path='../sample.sqlite')
-        cls.test()
+        while(1):
+            cls.test(1000)
+            raw_input("Press Enter to continue...")
 
 
 
