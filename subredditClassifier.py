@@ -134,11 +134,11 @@ class SubredditClassifier:
 
         #Train classifier by stochastic gradient descent.
         print "Training classifier..." , dt.now()
-        # self.svmCl.fit(X_train,y_train)
+        self.svmCl.fit(X_train,y_train)
 
-        classes = self.classes.values()
-        for (X, y) in self._X_y_iter(X_train, y_train):
-            self.enet.partial_fit(X, y, classes=classes)
+        # classes = self.classes.values()
+        # for (X, y) in self._X_y_iter(X_train, y_train):
+        #     self.enet.partial_fit(X, y, classes=classes)
 
         print(dt.now())
 
@@ -153,18 +153,18 @@ class SubredditClassifier:
         X_test = self.svd.transform(X_test)
         X_test = self.scl.transform(X_test)
 
-        score = self.enet.score(X_test, y_test)
+        # score = self.enet.score(X_test, y_test)
         # score = self.svmCl.score(X_test, y_test)
-        print "Accuracy =", score
+        # print "Accuracy =", score
 
-        predictions = self.enet.predict(X_test)
-        # predictions = self.svmCl.predict(X_test)
+        # predictions = self.enet.predict(X_test)
+        predictions = self.svmCl.predict(X_test)
 
 
         f1 = f1_score(y_test, predictions, average = None)
         print "F1_classes = ", f1
         f1 = f1_score(y_test, predictions, average = 'micro')
-        print "F1_micro = ", f1
+        print "Accuracy = F1_micro = ", f1
         f1 = f1_score(y_test, predictions, average = 'weighted')
         print "F1_weighted = ", f1
 
@@ -189,10 +189,10 @@ if __name__ == '__main__':
         cls = SubredditClassifier(fes=fe2, db_path='../sample.sqlite')
 
         #Fit classifier and feature extractors to the dataset.
-        cls.fit(2000)
+        cls.fit(10000)
 
         #Test feature extractor and classifier (weighted F1-score).
-        cls.test(1000)
+        cls.test(3000)
 
         if(sys.argv[2] == 'nosave'):
             pass
@@ -205,7 +205,7 @@ if __name__ == '__main__':
         print 'loaded model', dt.now()
         cls.connectDB(db_path='../sample.sqlite')
         while(1):
-            cls.test(1000)
+            cls.test(10000)
             raw_input("Press Enter to continue...")
 
 
