@@ -38,6 +38,7 @@ class SubredditClassifier:
         self.enet = SGDClassifier(penalty='elasticnet',
                              alpha=0.01,
                              l1_ratio=0.5)
+        self.svmCl = svm.SVC(verbose=True)
 
         #There are 7 subreddit classes in our data set.
         #Which we'll encode as follows:
@@ -56,6 +57,10 @@ class SubredditClassifier:
             'test': 1,
             'val': 2
         }
+
+    def connectDB(self, db_path='sample.db'):
+        self.con = sqlite3.connect(self.db_path)
+        return
 
     def _result_iter(self, cursor, arraysize=1000, f=lambda x: x):
         while True:
@@ -197,6 +202,8 @@ if __name__ == '__main__':
         print 'loading model', dt.now()
         cls = joblib.load('cls.pkl')
         print 'loaded model', dt.now()
+        cls.connectDB(db_path='../sample.sqlite')
+        cls.test()
 
 
 
