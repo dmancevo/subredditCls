@@ -13,6 +13,9 @@ https://www.kaggle.com/c/reddit-comments-may-2015/download/database.7z and unzip
 	* Run sample.py
 	* Now you have preprocessed sample of data
 
+Or alternativelty (to 1 and 2) you can download our sample from:
+https://drive.google.com/file/d/0B0eFSS1XBnpMSExMeXh5Ujltc28/view?usp=sharing
+
 3. Run classifier:
 	* Change variable db_path in classirier.py to contain path to sample db.
 	* Run classifier.py
