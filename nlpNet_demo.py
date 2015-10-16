@@ -106,6 +106,7 @@ def word_embeddings_demo():
     plot_word_vecs(["jaguar"], 'red')
     plot_word_vecs(["tiger","lion"], 'orange')
     plot_word_vecs(["car"], 'purple')
+    plt.title("Word Embeddings before trainning")
 
     plt.show()
     plt.close()
@@ -125,6 +126,7 @@ def word_embeddings_demo():
     plot_word_vecs(["jaguar"], 'red')
     plot_word_vecs(["tiger","lion"], 'orange')
     plot_word_vecs(["car"], 'purple')
+    plt.title("Word Embeddings after trainning")
 
     plt.show()
     plt.close()
