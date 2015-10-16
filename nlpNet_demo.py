@@ -27,6 +27,8 @@ def word_embeddings_demo():
     #dim stands for the input-output dimensions.
     #f stands for the activation function used.
     #df stands for the derivative of the activation function.
+    #drp_rate stands for the drop-out rate.
+    #c is a max-norm regularization parameter.
     l4 = layer(dim=(4,1),lrate=1.0,f=lambda x: x,df=lambda x: 1,
                drp_rate=0.0, c=30)
     l5 = layer(dim=(1,1),lrate=1.0,f=np.tanh, df=lambda x: (1-np.square(x)),
@@ -92,9 +94,27 @@ def word_embeddings_demo():
         Px, Py = [l1.W[word][0] for word in words], [l1.W[word][1] for word in words]
         plt.scatter(Px,Py, color=color)
 
+    #Initialize the word vectorizer's dictionary for demostration.
+    for word in A+B+C+D+E+F:
+        l1.W[word] = np.random.uniform(0,1.0, 2)
+
+
+    #Plot word vectors before training.
+    plot_word_vecs(A+B+C, 'green')
+    plot_word_vecs(D+E, 'blue')
+    plot_word_vecs(F, 'black')
+    plot_word_vecs(["jaguar"], 'red')
+    plot_word_vecs(["tiger","lion"], 'orange')
+    plot_word_vecs(["car"], 'purple')
+
+    plt.show()
+    plt.close()
+
     sentences = [A,B,C,D,E,F]
     comb = combinations(sentences, 2)
 
+    #We must train all possible sentence pairs.
+    #This is in part where this method becomes very computationally expensive.
     for s in comb:
         train(s[0],s[1])
     
