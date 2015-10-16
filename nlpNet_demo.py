@@ -3,21 +3,46 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from nlpNet import word_vec, conv_layer, pool_layer, layer, hinge_loss
+from itertools import combinations
 
 def word_embeddings_demo():
+
+    #ConvNet layers
+
+    #Word vectorizer layer.
+    #word_dim stands for the dimension of the vector associated to every word.
     l1 = word_vec(word_dim=2)
+
+    #Covulution layer.
+    #K is a tuple where the first entry denotes the number of filters spanning one word (1-grams)
+    #the second entry denotes the number of filters spanning two words (2-grams).
+    #lrate stands for the learning rate.
     l2 = conv_layer(word_dim=2, K=(4,0), lrate=1.0, c=20)
+
+    #Pool layer.
     l3 = pool_layer()
+
+    #Two standard layers here are equivalent to a simple neural network with
+    #one input layer, one hidden layer and one output layer.
+    #dim stands for the input-output dimensions.
+    #f stands for the activation function used.
+    #df stands for the derivative of the activation function.
     l4 = layer(dim=(4,1),lrate=1.0,f=lambda x: x,df=lambda x: 1,
                drp_rate=0.0, c=30)
     l5 = layer(dim=(1,1),lrate=1.0,f=np.tanh, df=lambda x: (1-np.square(x)),
                drp_rate=0.5, c=30)
                
+    #Hinge loss layer.
     h = hinge_loss(m=1)
-    
-    A = ['a1','a2','a3', 'a4', 'a5', 'a6', 'a7','ab1','ab2', 'ab3','ab4','ab5', 'ab6']
-    B = ['b1','b1','b2','b3', 'b4', 'b5', 'b6', 'b7', 'ab1','ab2','ab3','ab4','ab5', 'ab6']
-    C = ['c1','c2','c3', 'c4', 'c5', 'c6', 'c7']
+
+    #Sample sentences after removing some stop words and word endings.
+    A = "jaguar third largest feline tiger lion largest americas".split()
+    B = "tiger closest living relatives previously thought lion leopard jaguar".split()
+    C = "tiger jaguar leopard evolved africa".split()
+    D = "along sports car jaguar maintained strong place upscale saloon car market".split()
+    E = "june 2008 ford sold land rover jaguar car indian tata motors".split()
+    F = "mars fourth planet sun second smallest planet solar system mercury".split()
+
     
     def train(words1, words2):                
         for _ in range(5):
@@ -67,28 +92,19 @@ def word_embeddings_demo():
         Px, Py = [l1.W[word][0] for word in words], [l1.W[word][1] for word in words]
         plt.scatter(Px,Py, color=color)
 
-    #Plot word embedding before trainning.
-    for word in A+B+C:
-        if word in l1.W: continue
-        l1.W[word] =  np.random.uniform(0,1.0, 2)
+    sentences = [A,B,C,D,E,F]
+    comb = combinations(sentences, 2)
 
-    plot_word_vecs(A, 'blue')
-    plot_word_vecs(B, 'red')
-    plot_word_vecs(set(A).intersection(B), 'yellow')
-    plot_word_vecs(C, 'green')
-
-    plt.show()
-    plt.close()
-            
-    train(A, B)
-    train(A, C)
-    train(B, C)
+    for s in comb:
+        train(s[0],s[1])
     
     #Plot word embeddings after training.
-    plot_word_vecs(A, 'blue')
-    plot_word_vecs(B, 'red')
-    plot_word_vecs(set(A).intersection(B), 'yellow')
-    plot_word_vecs(C, 'green')
+    plot_word_vecs(A+B+C, 'green')
+    plot_word_vecs(D+E, 'blue')
+    plot_word_vecs(F, 'black')
+    plot_word_vecs(["jaguar"], 'red')
+    plot_word_vecs(["tiger","lion"], 'orange')
+    plot_word_vecs(["car"], 'purple')
 
     plt.show()
     plt.close()
