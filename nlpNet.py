@@ -2,7 +2,7 @@
 
 ############################################################
 #The code below was borrowed (and slightly modified) from: #
-#https://github.com/dmancevo/neural_nets                   #
+#https://github.com/dmancevo/nlpNet                        #
 ############################################################
 
 import numpy as np
