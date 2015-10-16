@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
 
+############################################################
+#The code below was borrowed (and slightly modified) from: #
+#https://github.com/dmancevo/neural_nets                   #
+############################################################
+
 import numpy as np
 
 class softmax_layer(object):
+    '''
+    Softmas layer for multiclass classification.
+    '''
     
     def __init__(self):
         
@@ -24,6 +32,10 @@ class softmax_layer(object):
         return dE_dV
 
 class hinge_loss(object):
+    '''
+    Hinge loss layer
+    (for unsupervised learning of word embeddings).
+    '''
     
     def __init__(self, m):
         '''
@@ -44,6 +56,9 @@ class hinge_loss(object):
             return np.zeros(2)
     
 class layer(object):
+    '''
+    Standard layer with drop out and max-norm regularization.
+    '''
     
     def __init__(self, dim, lrate, f, df, drp_rate, c):
         '''
@@ -122,6 +137,9 @@ class layer(object):
             
             
 class pool_layer(object):
+    '''
+    Pool layer.
+    '''
     
     def __init_(self):
         
@@ -150,6 +168,9 @@ class pool_layer(object):
         return dE_dV
 
 class conv_layer(object):
+    '''
+    Convolution layer
+    '''
     
     def __init__(self, word_dim, K, lrate, c):
         
@@ -230,6 +251,9 @@ class conv_layer(object):
 
     
 class word_vec(object):
+    '''
+    Word vectorizer.
+    '''
     
     def __init__(self, word_dim):
         
@@ -243,7 +267,8 @@ class word_vec(object):
         new_sentence = []
                     
         for word in sentence.split():
-                
+            
+            word = word.lower()
             new_sentence.append(word)
             
             if word not in self.W:
@@ -268,3 +293,4 @@ class word_vec(object):
             self.W[word] -= rate * dE_dZ[i:(i+self.word_dim)]
             
             i += self.word_dim
+        
