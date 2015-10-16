@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+'''
+Johannes Deselaers
+Mateusz Buda
+Olga Mikheeva
+Diego A. Mancevo
+'''
 # DB Sampling, adding marker for train/val/test/ dataset, stemming, stopwords removal
 import sqlite3
 import os.path
